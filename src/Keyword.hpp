@@ -104,7 +104,7 @@ class AccessKeyword : public Keyword {
       }
     }
     for (auto it = m_altNames.rbegin(); it != m_altNames.crend(); ++it) {
-      const auto &entity = env.FindEntity(*it);
+      auto entity = env.FindEntity(*it);
       if (!entity) {
         continue;
       }
@@ -116,6 +116,7 @@ class AccessKeyword : public Keyword {
                 R"("is ambiguous by USING statement, could be ")" +
                 target->GetName() + R"(" or ")" + entity->GetName() + "\"");
       }
+      target = std::move(entity);
     }
 
     if (!target) {

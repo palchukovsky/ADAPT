@@ -1,0 +1,33 @@
+DECLARE testDecl;
+
+SCOPE level1 {
+
+  DECLARE testDecl;
+
+  SCOPE level2 {
+
+    DECLARE testDecl;
+
+    SCOPE level3 { DECLARE testDecl3; }
+
+    USING level3;
+    ACCESS testDecl;
+    ACCESS testDecl3;
+
+  }
+
+  USING level2::level3;
+
+  ACCESS testDecl;
+  ACCESS level2::level3::testDecl3;
+  ACCESS testDecl3;
+
+  USING ::level1::level2::level3;
+  ACCESS testDecl3;
+
+}
+
+USING level1::level2::level3;
+
+ACCESS testDecl3;
+ACCESS level1::level2::level3::testDecl3;

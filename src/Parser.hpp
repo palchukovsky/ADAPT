@@ -174,7 +174,7 @@ class ParserSession {
   void CreateUsingKeyword(const Char &ch) {
     ValidateKeyword<1, false>(ch);
     // new using usage rests previous using
-    m_using = std::move(m_keywordArgs[0]);
+    m_using = m_keywordArgs[0] + Names::GetScopePathDel();
   }
 
   void CreateScopeKeyword(const Char &ch) {
@@ -199,11 +199,7 @@ class ParserSession {
 
   void CreateAccessKeyword(const Char &ch) {
     ValidateKeyword<1, false>(ch);
-    const auto &delimeter = Names::GetScopePathDel();
-    if (m_keywordArgs[0].size() >= delimeter.size() &&
-        std::equal(m_keywordArgs[0].cbegin(),
-                   m_keywordArgs[0].cbegin() + delimeter.size(),
-                   delimeter.cbegin(), delimeter.cend())) {
+    if (IsRoot(m_keywordArgs[0])) {
       // has only one variant as in the path provided as an absolute path from
       // root
       m_result.emplace_back(std::make_shared<AccessKeyword>(
@@ -219,9 +215,15 @@ class ParserSession {
     }
     std::vector<String> altNames;
     if (!m_using.empty()) {
-      altNames = m_scope;
-      for (auto &level : altNames) {
-        level += m_using + delimeter + m_keywordArgs[0];
+      if (IsRoot(m_using)) {
+        // using uses absolute path, so only one variant could be
+        altNames.push_back(m_using + m_keywordArgs[0]);
+      } else {
+        // providing all possible alt-names with the using
+        altNames = m_scope;
+        for (auto &level : altNames) {
+          level += m_using + m_keywordArgs[0];
+        }
       }
     }
     m_result.emplace_back(std::make_shared<AccessKeyword>(
@@ -245,6 +247,15 @@ class ParserSession {
     if (!(isScope ? IsScopeBegin(ch) : IsKeywordEnd(ch))) {
       throw SyntaxError(m_codeSource, "unexpected end of keyword");
     }
+  }
+
+  static bool IsRoot(const std::string &path) {
+    const auto &delimeter = Names::GetScopePathDel();
+    if (path.size() < delimeter.size()) {
+      return false;
+    }
+    return std::equal(path.cbegin(), path.cbegin() + delimeter.size(),
+                      delimeter.cbegin(), delimeter.cend());
   }
 
  private:
