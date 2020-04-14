@@ -1,0 +1,39 @@
+DECLARE testDecl;
+
+SCOPE level1 {
+
+  DECLARE testDecl;
+
+  SCOPE level2 {
+
+    DECLARE testDecl;
+
+    SCOPE level3 { DECLARE testDecl; DECLARE level3decl; DECLARE lEvEl3decl; SCOPE level4{ DECLARE lEvEl4decl; ACCESS testDecl; ACCESS ::testDecl; } }
+
+    DECLARE testDecl2;
+
+    ACCESS testDecl2;
+    ACCESS testDecl;
+    ACCESS ::testDecl;
+    ACCESS ::level1::testDecl;
+    ACCESS level1::testDecl;
+    ACCESS level3::level4::lEvEl4decl;
+
+  }
+
+  ACCESS level2::testDecl2;
+    ACCESS testDecl;
+  ACCESS ::level1::testDecl;
+    ACCESS level1::testDecl;
+  ACCESS level2::level3::level4::lEvEl4decl;
+
+}
+
+ACCESS level1::level2::testDecl2;
+ACCESS testDecl;
+ACCESS ::level1::testDecl;
+ACCESS level1::testDecl;
+ACCESS level1::level2::level3::level4::lEvEl4decl;
+
+DECLARE lastDecl;
+ACCESS lastDecl;

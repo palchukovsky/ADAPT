@@ -64,18 +64,22 @@ int main(int argc, char *argv[]) {
 
     const auto &keywords =
         Parse(source, [&debug](const Exception &ex) { PrintError(ex, debug); });
-    if (keywords.empty()) {
-      return 1;
-    }
 
-    Environment env(std::cout);
+    Environment env;
+    bool hasErrors = false;
     for (const auto &keyword : keywords) {
       try {
         keyword->Execute(env);
       } catch (const BadLanguageException &ex) {
+        hasErrors = true;
         PrintError(ex, debug);
       }
     }
+
+    if (hasErrors) {
+      return 1;
+    }
+    env.FlushOutput(std::cout);
 
   } catch (const Exception &ex) {
     PrintError(ex, debug);

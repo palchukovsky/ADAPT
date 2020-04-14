@@ -78,6 +78,10 @@ class ParserSession {
       }
       CheckKeyword(ch);
     }
+    if (m_scope.size() > 1) {
+      // one scope - is root scope
+      throw SyntaxError(m_codeSource, "not all scopes are closed");
+    }
   }
 
  private:
@@ -159,8 +163,8 @@ class ParserSession {
   void CreateKeyword(const Char &ch) {
     const auto &factory = m_factories.find(m_keywordName);
     if (factory == m_factories.cend()) {
-      throw BadLanguageException(m_codeSource,
-                                 R"(unknown keyword ")" + m_keywordName + "\"");
+      throw SyntaxError(m_codeSource,
+                        R"(unknown keyword ")" + m_keywordName + "\"");
     }
     factory->second(ch);
     m_keywordName.clear();
@@ -175,7 +179,7 @@ class ParserSession {
 
   void CreateScopeKeyword(const Char &ch) {
     ValidateKeyword<1, true>(ch);
-    auto name = m_scope.front() + m_keywordArgs[0];
+    auto name = m_scope.back() + m_keywordArgs[0];
     // caches all possible scopes, prepares it for future declarations and
     // accessors
     m_scope.push_back(name + Names::GetScopePathDel());
@@ -234,7 +238,7 @@ class ParserSession {
       --argsNo;
     }
     if (argsNo != argsNoReq) {
-      throw BadLanguageException(
+      throw SyntaxError(
           m_codeSource,
           "number of keyword keyword arguments is not the same as expected");
     }
@@ -277,16 +281,7 @@ template <typename Char, typename ErrorHandeler>
 std::vector<std::shared_ptr<Keyword>> Parse(std::basic_istream<Char> &source,
                                             const ErrorHandeler &handleError) {
   std::vector<std::shared_ptr<Keyword>> result;
-  bool hasErrors = false;
-  Details::ParserSession<Char>(source, result,
-                               [&handleError, &hasErrors](const Exception &ex) {
-                                 hasErrors = true;
-                                 handleError(ex);
-                               })
-      .Parse();
-  if (hasErrors) {
-    return {};
-  }
+  Details::ParserSession<Char>(source, result, handleError).Parse();
   return result;
 }
 }  // namespace adapt

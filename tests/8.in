@@ -1,0 +1,4 @@
+SCOPE scope {
+
+  DECLARE x1;
+  ACCESS x1;

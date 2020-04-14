@@ -1,0 +1,7 @@
+LINE 3 ACCESS ::hello::foo
+LINE 9 ACCESS ::hello::bar
+LINE 10 ACCESS ::hello::foo
+LINE 13 ACCESS ::hello::hootie::xyz
+LINE 14 ACCESS ::hello::bar
+LINE 17 ACCESS ::hello::foo
+LINE 18 ACCESS ::hello::bar

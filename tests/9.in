@@ -1,0 +1,18 @@
+SCOPE hello {
+   DECLARE foo;
+   ACCESS foo; // SUCCESS
+   DECLARE bar;
+
+   SCOPE hootie {
+      DECLARE xyz;
+      DECLARE foo; // SUCCESS? -- shadows hello::foo
+      ACCESS bar; // SUCCESS
+      ACCESS hello::foo; // SUCCESS
+   }
+
+   ACCESS hootie::xyz; // SUCCESS
+   ACCESS ::hello::bar; // SUCCESS
+   DECLARE birdie;
+}
+ACCESS hello::foo; // SUCCESS
+ACCESS ::hello::bar; // SUCCESS

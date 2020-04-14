@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}\\adapt-test.exe",
-      "args": [],
+      "args": ["tests/9.in", "--debug"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

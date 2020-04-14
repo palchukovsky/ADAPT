@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <ostream>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -28,7 +29,7 @@ class Environment {
   };
 
  public:
-  explicit Environment(std::ostream &outStream);
+  Environment() = default;
   Environment(Environment &&) = default;
   Environment(const Environment &) = delete;
   Environment &operator=(Environment &&) = default;
@@ -40,11 +41,12 @@ class Environment {
 
   std::shared_ptr<const Entity> FindEntity(const std::string &name) const;
 
-  void PrintLn(const std::string &);
+  void PrintLn(std::string);
+  void FlushOutput(std::ostream &);
 
  private:
   std::unordered_map<std::string, std::shared_ptr<Entity>> m_scope;
-  std::ostream &m_outStream;
+  std::vector<std::string> m_output;
 };
 
 }  // namespace adapt

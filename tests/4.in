@@ -1,0 +1,3 @@
+DECLARE hello1 hello2; // Wrong number of arguments.
+ACCESS hello1;
+ACCESS hello2;

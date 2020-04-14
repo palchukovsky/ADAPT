@@ -14,12 +14,11 @@ const std::string &Environment::Entity::GetName() const { return m_name; }
 
 const Keyword &Environment::Entity::GetRuntime() const { return *m_runtime; }
 
-Environment::Environment(std::ostream &outStream) : m_outStream(outStream) {}
-
 bool Environment::RegisterEntity(const std::string &name,
                                  std::string path,
                                  std::shared_ptr<const Keyword> runtime) {
-  static const std::regex nameRule("[a-z]+[a-z0-1]*");
+  static const std::regex nameRule(R"([a-z][a-z\d]*)",
+                                   std::regex_constants::icase);
   if (!std::regex_match(name, nameRule)) {
     throw BadLanguageException(
         runtime->GetCodeSource(),
@@ -38,6 +37,14 @@ std::shared_ptr<const Environment::Entity> Environment::FindEntity(
   return result->second;
 }
 
-void Environment::PrintLn(const std::string &line) {
-  m_outStream << line << std::endl;
+void Environment::PrintLn(std::string line) {
+  m_output.push_back(std::move(line));
+}
+
+void Environment::FlushOutput(std::ostream &outStream) {
+  for (const auto &line : m_output) {
+    outStream << line << std::endl;
+  }
+  m_output.clear();
+  m_output.shrink_to_fit();
 }
