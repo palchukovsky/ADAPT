@@ -1,0 +1,24 @@
+SCOPE hello {
+   DECLARE foo;
+   ACCESS foo; // SUCCESS
+   DECLARE bar;
+
+   SCOPE hootie {
+      DECLARE xyz;
+      DECLARE foo; // SUCCESS? -- shadows hello::foo
+      ACCESS bar; // SUCCESS
+      ACCESS hello::foo; // SUCCESS
+   }
+
+   ACCESS birdie; // FAIL -- not declared yet
+   ACCESS xyz; // FAIL -- doesn�t exist
+   ACCESS hootie::xyz; // SUCCESS
+   ACCESS ::hello::bar; // SUCCESS
+   DECLARE birdie;
+}
+DECLARE hello; // FAIL -- name conflict
+DECLARE hello::test; // FAIL -- not allowed
+ACCESS hello::foo; // SUCCESS
+ACCESS ::hello::bar; // SUCCESS
+ACCESS foo; // FAIL
+ACCESS hello; // FAIL -- not a name you can access, because it is a SCOPE

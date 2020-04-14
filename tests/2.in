@@ -1,0 +1,4 @@
+SCOPE x {
+	DECLARE y;
+	ACCESS y;
+}
